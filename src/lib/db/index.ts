@@ -2,15 +2,21 @@ import { neon, type NeonQueryFunction } from "@neondatabase/serverless"
 
 let sql: NeonQueryFunction<false, false> | null = null
 
+function assertDatabaseConfigured() {
+  const url = process.env.DATABASE_URL
+  if (!url) {
+    // Important: do not fail during module evaluation/build in non-API contexts.
+    // Throw only when DB functions are invoked.
+    throw new Error(
+      "DATABASE_URL environment variable is not set. Please configure a Neon database (e.g., via Vercel integration)."
+    )
+  }
+  return url
+}
+
 function getSql() {
   if (!sql) {
-    const url = process.env.DATABASE_URL
-    if (!url) {
-      throw new Error(
-        "DATABASE_URL environment variable is not set. " +
-        "Please create a Neon database via Vercel integration."
-      )
-    }
+    const url = assertDatabaseConfigured()
     sql = neon(url)
   }
   return sql
