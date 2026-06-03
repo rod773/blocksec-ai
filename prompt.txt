@@ -1,0 +1,55 @@
+PROYECTO: BlockSec AI — Blockchain Security Analysis Platform
+
+TECNOLOGÍAS:
+- Next.js 16 (App Router)
+- TypeScript
+- Tailwind CSS v4
+- shadcn/ui (Base UI / Radix)
+- Wagmi v3 + Viem (Web3)
+- ethers v6
+- TanStack React Query
+- SIWE (Sign-In with Ethereum)
+- Framer Motion (animaciones)
+- GSAP + ScrollTrigger (scroll animations)
+- ScrollReveal (entrance animations)
+- Lucide React (iconos)
+
+ESTRUCTURA:
+src/
+├── app/
+│   ├── layout.tsx          # Root layout con Providers, Header, TooltipProvider
+│   ├── page.tsx            # Landing page: Hero + Scanner + Dashboard + Monitor
+│   ├── dashboard/
+│   │   └── page.tsx        # Dashboard con Tabs (Scanner, Monitor, Dashboard)
+│   └── globals.css         # Tailwind v4 + shadcn CSS variables + theme
+├── components/
+│   ├── ui/                 # shadcn/ui components (Button, Card, Input, Badge, etc.)
+│   ├── providers.tsx       # WagmiProvider + QueryClientProvider
+│   ├── header.tsx          # Navbar fija con NavigationMenu + WalletConnect
+│   ├── wallet-connect.tsx  # Conexión wallet con DropdownMenu
+│   ├── hero-section.tsx    # Hero animado con GSAP ScrollTrigger
+│   ├── animated-section.tsx # Wrapper de scroll reveal + framer-motion
+│   ├── contract-scanner.tsx # Escáner de contratos ERC-20
+│   ├── security-dashboard.tsx # Dashboard de seguridad con métricas
+│   └── transaction-monitor.tsx # Monitor de transacciones
+├── lib/
+│   ├── web3.ts             # Config Wagmi (mainnet, sepolia, base)
+│   └── utils.ts            # cn() utility
+
+CARACTERÍSTICAS:
+1. Conexión wallet (MetaMask, WalletConnect, etc.)
+2. Escaneo de contratos ERC-20 (nombre, símbolo, supply, validación)
+3. Monitor de transacciones (estado, block, gas, from/to)
+4. Dashboard de seguridad (balance, red, block actual)
+5. Animaciones profesionales (framer-motion, GSAP, ScrollReveal)
+6. Diseño responsive + dark mode
+7. UI components con shadcn/ui
+
+SCRIPTS:
+- yarn dev         # Desarrollo
+- yarn build       # Build producción
+- yarn start       # Servir producción
+- yarn lint        # ESLint
+
+VARIABLES DE ENTORNO (.env.local):
+NEXT_PUBLIC_WC_PROJECT_ID=tu_project_id_walletconnect
