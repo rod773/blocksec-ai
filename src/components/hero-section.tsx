@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { Logo } from "./logo"
 import Link from "next/link"
 import { ArrowRightIcon, ShieldCheckIcon } from "lucide-react"
 
@@ -86,17 +87,26 @@ export function HeroSection() {
             AI-Powered Blockchain Security
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
-          >
-            Blockchain Security{" "}
-            <span className="bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent">
-              Reimagined
-            </span>
-          </motion.h1>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="flex justify-center mb-6"
+            >
+              <Logo size={64} animated showText={false} />
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
+            >
+              Blockchain Security{" "}
+              <span className="bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent">
+                Reimagined
+              </span>
+            </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}

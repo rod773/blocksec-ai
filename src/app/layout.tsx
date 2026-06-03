@@ -28,6 +28,11 @@ export const metadata: Metadata = {
     "web3",
     "defi",
   ],
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+  },
 }
 
 export default function RootLayout({

@@ -13,7 +13,8 @@ import { Button } from "@/components/ui/button"
 import { WalletConnect } from "./wallet-connect"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
-import { MenuIcon, XIcon, ShieldCheckIcon } from "lucide-react"
+import { Logo } from "./logo"
+import { MenuIcon, XIcon } from "lucide-react"
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -41,11 +42,8 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5 font-bold text-lg">
-          <span className="size-8 rounded-lg bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
-            <ShieldCheckIcon className="size-4" />
-          </span>
-          <span className="hidden sm:inline">BlockSec AI</span>
+        <Link href="/" className="flex items-center gap-2.5 no-underline">
+          <Logo size={28} animated={false} showText />
         </Link>
 
         <NavigationMenu className="hidden md:flex">
