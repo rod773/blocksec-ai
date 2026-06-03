@@ -1,9 +1,24 @@
-import { neon } from "@neondatabase/serverless"
+import { neon, type NeonQueryFunction } from "@neondatabase/serverless"
 
-const sql = neon(process.env.DATABASE_URL ?? "")
+let sql: NeonQueryFunction<false, false> | null = null
+
+function getSql() {
+  if (!sql) {
+    const url = process.env.DATABASE_URL
+    if (!url) {
+      throw new Error(
+        "DATABASE_URL environment variable is not set. " +
+        "Please create a Neon database via Vercel integration."
+      )
+    }
+    sql = neon(url)
+  }
+  return sql
+}
 
 export async function initDatabase() {
-  await sql`
+  const db = getSql()
+  await db`
     CREATE TABLE IF NOT EXISTS scans (
       id SERIAL PRIMARY KEY,
       address TEXT NOT NULL,
@@ -16,7 +31,7 @@ export async function initDatabase() {
     )
   `
 
-  await sql`
+  await db`
     CREATE TABLE IF NOT EXISTS transactions (
       id SERIAL PRIMARY KEY,
       hash TEXT NOT NULL UNIQUE,
@@ -38,7 +53,8 @@ export async function saveScan(data: {
   passed: number
   total: number
 }) {
-  const [row] = await sql`
+  const db = getSql()
+  const [row] = await db`
     INSERT INTO scans (address, name, symbol, results, passed, total)
     VALUES (${data.address}, ${data.name}, ${data.symbol}, ${JSON.stringify(data.results)}, ${data.passed}, ${data.total})
     RETURNING id, created_at
@@ -54,7 +70,8 @@ export async function saveTransaction(data: {
   from: string
   to: string | null
 }) {
-  const [row] = await sql`
+  const db = getSql()
+  const [row] = await db`
     INSERT INTO transactions (hash, block_number, status, gas_used, from_addr, to_addr)
     VALUES (${data.hash}, ${BigInt(data.blockNumber)}, ${data.status}, ${data.gasUsed}, ${data.from}, ${data.to})
     ON CONFLICT (hash) DO NOTHING
@@ -64,15 +81,15 @@ export async function saveTransaction(data: {
 }
 
 export async function getRecentScans(limit = 10) {
-  return sql`
+  const db = getSql()
+  return db`
     SELECT * FROM scans ORDER BY created_at DESC LIMIT ${limit}
   `
 }
 
 export async function getRecentTransactions(limit = 10) {
-  return sql`
+  const db = getSql()
+  return db`
     SELECT * FROM transactions ORDER BY created_at DESC LIMIT ${limit}
   `
 }
-
-export { sql }
