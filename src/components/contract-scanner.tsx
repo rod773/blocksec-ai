@@ -10,7 +10,6 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -20,7 +19,6 @@ import { AnimatedSection } from "./animated-section"
 import {
   SearchIcon,
   ShieldCheckIcon,
-  AlertTriangleIcon,
   CheckCircle2Icon,
   XCircleIcon,
   Loader2Icon,
@@ -132,9 +130,37 @@ export function ContractScanner() {
       },
     ]
 
+    const passed = results.filter((c) => c.passed).length
+    const total = results.length
+
     setChecks(results)
-    setLoading(false)
-    setScanned(true)
+
+    try {
+      const response = await fetch("/api/scan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          address,
+          name: name ?? null,
+          symbol: symbol ?? null,
+          results,
+          passed,
+          total,
+        }),
+      })
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => null)
+        console.error("Failed to persist scan:", err ?? response.statusText)
+      }
+    } catch (e) {
+      console.error("Failed to persist scan:", e)
+    } finally {
+      setLoading(false)
+      setScanned(true)
+    }
   }
 
   const passedCount = checks.filter((c) => c.passed).length

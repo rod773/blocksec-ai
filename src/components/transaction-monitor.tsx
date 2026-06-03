@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { isHash } from "viem"
 import { useWaitForTransactionReceipt } from "wagmi"
 import { motion, AnimatePresence } from "framer-motion"
@@ -46,13 +46,63 @@ export function TransactionMonitor() {
 
   const items = receipt
     ? [
-        { label: "Status", value: receipt.status === "success" ? "Success" : "Failed", icon: receipt.status === "success" ? CheckCircle2Icon : XCircleIcon, highlight: true },
+        {
+          label: "Status",
+          value: receipt.status === "success" ? "Success" : "Failed",
+          icon: receipt.status === "success" ? CheckCircle2Icon : XCircleIcon,
+          highlight: true,
+        },
         { label: "Block", value: `#${receipt.blockNumber.toString()}`, icon: BlocksIcon },
         { label: "Gas Used", value: receipt.gasUsed.toString(), icon: FuelIcon },
         { label: "From", value: receipt.from, icon: ArrowUpRightIcon, mono: true },
-        { label: "To", value: receipt.to ?? "Contract creation", icon: ArrowDownLeftIcon, mono: true },
+        {
+          label: "To",
+          value: receipt.to ?? "Contract creation",
+          icon: ArrowDownLeftIcon,
+          mono: true,
+        },
       ]
     : []
+
+  const lastPersistedHashRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    const persist = async () => {
+      if (!receipt) return
+      if (!searched) return
+      if (!txHash) return
+      if (lastPersistedHashRef.current === txHash) return
+
+      lastPersistedHashRef.current = txHash
+
+      try {
+        const res = await fetch("/api/transactions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            hash: txHash,
+            blockNumber: receipt.blockNumber.toString(),
+            status: receipt.status,
+            gasUsed: receipt.gasUsed.toString(),
+            from: receipt.from,
+            to: receipt.to ?? null,
+          }),
+        })
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => null)
+          console.error(
+            "Failed to persist transaction:",
+            err ?? res.statusText
+          )
+        }
+      } catch (e) {
+        console.error("Failed to persist transaction:", e)
+      }
+    }
+
+    persist()
+  }, [receipt, searched, txHash])
 
   return (
     <AnimatedSection delay={0.1}>
