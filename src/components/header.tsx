@@ -50,11 +50,12 @@ export function Header() {
           <NavigationMenuList>
             {navLinks.map((link) => (
               <NavigationMenuItem key={link.href}>
-                <Link href={link.href} className="no-underline">
-                  <NavigationMenuLink className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                    {link.label}
-                  </NavigationMenuLink>
-                </Link>
+                <NavigationMenuLink
+                  href={link.href}
+                  className="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
           </NavigationMenuList>

@@ -131,7 +131,7 @@ export function HeroSection() {
                 <ArrowRightIcon className="size-4" />
               </Button>
             </Link>
-            <Link href="/">
+            <Link href="#features">
               <Button variant="outline" size="lg" className="h-11 px-6 text-base">
                 Learn More
               </Button>
@@ -139,7 +139,7 @@ export function HeroSection() {
           </motion.div>
         </motion.div>
 
-        <div className="mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div id="features" className="mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, i) => {
             const Icon = feature.icon
             return (
