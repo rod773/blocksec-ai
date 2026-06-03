@@ -1,16 +1,16 @@
 "use client"
 
 import { useAccount, useConnect, useDisconnect } from "wagmi"
-import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 import { WalletIcon, LogOutIcon, CheckCircleIcon, Loader2Icon } from "lucide-react"
 
 export function WalletConnect() {
@@ -31,49 +31,65 @@ export function WalletConnect() {
           </span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel className="flex items-center gap-2 text-xs font-normal">
-            <CheckCircleIcon className="size-3.5 text-emerald-500" />
-            Connected
-          </DropdownMenuLabel>
-          <div className="px-2 py-1.5">
-            <p className="text-xs font-mono text-muted-foreground truncate">{address}</p>
-          </div>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => disconnect()} className="gap-2 text-destructive focus:text-destructive">
-            <LogOutIcon className="size-4" />
-            Disconnect
-          </DropdownMenuItem>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="flex items-center gap-2 text-xs font-normal">
+              <CheckCircleIcon className="size-3.5 text-emerald-500" />
+              Connected
+            </DropdownMenuLabel>
+            <div className="px-2 py-1.5">
+              <p className="text-xs font-mono text-muted-foreground truncate">{address}</p>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => disconnect()} className="gap-2 text-destructive focus:text-destructive">
+              <LogOutIcon className="size-4" />
+              Disconnect
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     )
   }
 
+  const available = connectors.filter((c) => c.name !== "WalletConnect")
+
+  if (available.length === 0) return null
+
   return (
-    <AnimatePresence mode="wait">
-      {connectors
-        .filter((c) => c.name !== "WalletConnect")
-        .slice(0, 1)
-        .map((connector) => (
-          <motion.div
-            key={connector.id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <Button
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={cn(
+          "inline-flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium whitespace-nowrap transition-all outline-none select-none shadow-sm",
+          "bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:from-emerald-600 hover:to-cyan-600",
+          isPending && "pointer-events-none opacity-60"
+        )}
+      >
+        {isPending ? (
+          <Loader2Icon className="size-4 animate-spin" />
+        ) : (
+          <WalletIcon className="size-4" />
+        )}
+        {isPending ? "Connecting..." : "Connect"}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Select Wallet</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {available.map((connector) => (
+            <DropdownMenuItem
+              key={connector.id}
               onClick={() => connect({ connector })}
-              disabled={isPending}
-              size="sm"
-              className="gap-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:from-emerald-600 hover:to-cyan-600 shadow-sm"
+              className="gap-2"
             >
-              {isPending ? (
-                <Loader2Icon className="size-4 animate-spin" />
+              {connector.icon ? (
+                <img src={connector.icon} alt="" className="size-4 rounded-full" />
               ) : (
                 <WalletIcon className="size-4" />
               )}
-              {isPending ? "Connecting..." : "Connect"}
-            </Button>
-          </motion.div>
-        ))}
-    </AnimatePresence>
+              {connector.name}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
