@@ -1,6 +1,7 @@
 "use client"
 
 import { useAccount, useConnect, useDisconnect } from "wagmi"
+import { useCallback, useState } from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,8 +16,27 @@ import { WalletIcon, LogOutIcon, CheckCircleIcon, Loader2Icon } from "lucide-rea
 
 export function WalletConnect() {
   const { isConnected, address } = useAccount()
-  const { connect, connectors, isPending } = useConnect()
+  const { connect, connectors, isPending, reset } = useConnect()
   const { disconnect } = useDisconnect()
+  const [open, setOpen] = useState(false)
+
+  const handleConnect = useCallback(
+    (connector: (typeof connectors)[number]) => {
+      if (isPending) return
+      setOpen(false)
+      connect(
+        { connector },
+        {
+          onError: () => {
+            reset()
+            setOpen(false)
+          },
+          onSuccess: () => setOpen(false),
+        }
+      )
+    },
+    [connect, isPending, reset]
+  )
 
   if (isConnected && address) {
     return (
@@ -55,7 +75,7 @@ export function WalletConnect() {
   if (available.length === 0) return null
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={(v) => setOpen(v)}>
       <DropdownMenuTrigger
         className={cn(
           "inline-flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium whitespace-nowrap transition-all outline-none select-none shadow-sm",
@@ -77,7 +97,7 @@ export function WalletConnect() {
           {available.map((connector) => (
             <DropdownMenuItem
               key={connector.id}
-              onClick={() => connect({ connector })}
+              onClick={() => handleConnect(connector)}
               className="gap-2"
             >
               {connector.icon ? (
