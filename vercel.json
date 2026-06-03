@@ -1,0 +1,10 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "yarn build",
+  "outputDirectory": ".next",
+  "installCommand": "yarn install",
+  "crons": [],
+  "env": {
+    "NEXT_PUBLIC_WC_PROJECT_ID": ""
+  }
+}
